@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Big Nate and Friends - Books</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&family=Quicksand:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/static/book_details_user.css">
+</head>
+<style>
+  /* ===== Wishlist button (base) ===== */
+  html{
+    scroll-behavior: smooth;
+  }
+
+  .availability-badge.unavailable {
+  background-color: #fdecea;   /* rouge très clair */
+  color: #c0392b;              /* rouge foncé */
+  border: 1px solid #f5b7b1;
+}
+.wishlist-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 14px;
+  color: #4f4632;
+
+  transition: color 0.2s ease;
+}
+
+/* SVG base */
+.wishlist-btn svg path {
+  transition: fill 0.2s ease;
+  fill: #4f4632;
+}
+
+/* Hover */
+.wishlist-btn:hover {
+  color: #e8ba96;
+}
+
+.wishlist-btn:hover svg path {
+  fill: #e8ba96;
+}
+
+/* ===== Active (favorited) ===== */
+.wishlist-btn.active {
+  color: #e8ba96;
+}
+
+.wishlist-btn.active svg path {
+  fill: #e8ba96;
+}
+
+/* Optional: accessibility */
+.wishlist-btn[aria-pressed="true"] {
+  color: #e8ba96;
+}
+
+/* ===== Disabled safety (if ever needed) ===== */
+.wishlist-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+
+}
+.review-cta {
+  margin-top: 24px;
+  font-size: 0.95rem;
+  color: #000000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.review-cta:hover {
+  text-decoration: underline;
+}
+
+.review-box {
+  margin-top: 12px;
+  padding: 14px 0;
+  animation: slideDown 0.25s ease;
+}
+
+.rating-stars {
+  font-size: 1.4rem;
+  color: #ddd;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.rating-stars span.active {
+  color: #f5b301;
+}
+
+.review-box textarea {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  padding: 6px 2px;
+  font-size: 0.95rem;
+  resize: none;
+}
+
+.review-box textarea:focus {
+  outline: none;
+  border-color: #000000;
+}
+
+.review-actions {
+  margin-top: 8px;
+}
+
+.review-actions button {
+  background: none;
+  border: none;
+  color: #000000;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+  </style>
+<body>
+  <!-- Header -->
+<header class="header">
+  <div class="header-container">
+
+    <!-- Logo → /home -->
+    <a href="/home">
+      <img
+        src="/static/assets/books..webp"
+        alt="Books Logo"
+        class="logo"
+      >
+    </a>
+
+    <nav>
+      <ul class="nav-list">
+
+      </ul>
+    </nav>
+
+    <div class="header-right">
+
+      <!-- Search icon -->
+      <svg class="icon-btn" width="19" height="19" viewBox="0 0 19 19" fill="none">
+        <path
+          d="M12.9355 14.9738C11.5777 16.0283 9.8715 16.6563 8.01852 16.6563
+             C3.59001 16.6563 0 13.0694 0 8.64481
+             C0 4.22019 3.59001 0.633333 8.01852 0.633333
+             C12.447 0.633333 16.037 4.22019 16.037 8.64481
+             C16.037 10.4962 15.4085 12.2009 14.353 13.5575
+             L17.4547 16.6562
+             C17.8461 17.0472 17.8461 17.6813 17.4547 18.0724
+             C17.0631 18.4634 16.4285 18.4634 16.0371 18.0724
+             L12.9355 14.9738Z"
+          fill="black"
+        />
+      </svg>
+
+      <!-- User icon -->
+      <svg class="icon-btn" width="19" height="19" viewBox="0 0 19 19" fill="none">
+        <path
+          d="M9.5 8.63637C11.4432 8.63637 13.0185 7.08971 13.0185 5.18182
+             C13.0185 3.27392 11.4432 1.72727 9.5 1.72727
+             C7.55678 1.72727 5.98148 3.27392 5.98148 5.18182
+             C5.98148 7.08971 7.55678 8.63637 9.5 8.63637Z"
+          fill="#1D1D1B"
+        />
+        <path
+          d="M9.5 10.3636C6.09936 10.3636 3.3426 13.0703 3.3426 16.4091
+             V18.1363C3.3426 18.6134 2.94877 19 2.46296 19
+             C1.97716 19 1.58333 18.6134 1.58333 18.1363
+             V16.4091C1.58333 12.1163 5.12774 8.63637 9.5 8.63637
+             C13.8722 8.63637 17.4167 12.1163 17.4167 16.4091
+             V18.1363C17.4167 18.6134 17.0228 19 16.5371 19
+             C16.0512 19 15.6574 18.6134 15.6574 18.1363
+             V16.4091C15.6574 13.0703 12.9007 10.3636 9.5 10.3636Z"
+          fill="#1D1D1B"
+        />
+      </svg>
+
+      <!-- Cart -->
+      <div class="cart-wrapper">
+        <span class="cart-label">My Cart:</span>
+
+        <svg class="icon-btn" width="19" height="19" viewBox="0 0 19 19" fill="none">
+          <path
+            d="M15.5698 11.627H6.97178
+               C5.80842 11.6273 4.81015 10.7982 4.59686 9.65459
+               L3.47784 3.59252
+               C3.40702 3.20522 3.06646 2.92595 2.67278 2.93238
+               H0.805055
+               C0.360435 2.93238 0 2.57194 0 2.12732
+               C0 1.6827 0.360435 1.32227 0.805055 1.32227
+               H2.68888
+               C3.85224 1.32194 4.85051 2.15101 5.0638 3.29465
+               L6.18282 9.35672
+               C6.25364 9.74402 6.5942 10.0233 6.98788 10.0169
+               H15.5778
+               C15.9715 10.0233 16.3121 9.74402 16.3829 9.35672
+               L17.3972 3.88234
+               C17.4407 3.64509 17.3755 3.40085 17.2195 3.21684
+               C17.0636 3.03283 16.8334 2.92843 16.5922 2.93238
+               H7.2455
+               C6.80088 2.93238 6.44044 2.57194 6.44044 2.12732
+               C6.44044 1.6827 6.80088 1.32227 7.2455 1.32227
+               H16.5841
+               C17.3023 1.32206 17.9833 1.64149 18.4423 2.19385
+               C18.9013 2.74622 19.0907 3.4742 18.959 4.18021
+               L17.9447 9.65459
+               C17.7314 10.7982 16.7331 11.6273 15.5698 11.627Z"
+            fill="#1D1D1B"
+          />
+        </svg>
+
+        <span class="cart-badge">2</span>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+
+  <!-- Main Content -->
+  <main class="main-section">
+    <a href="/books" class="back-link">
+      <div class="back-arrow">
+        <svg width="11" height="5" viewBox="0 0 11 5" fill="none">
+          <path
+            d="M10.5793 2.28954C10.5793 2.53299 10.382 2.73035 10.1385 2.73035L1.52715 2.73048L2.56297 3.73673C2.73759 3.90636 2.74163 4.18544 2.572 4.36005C2.40236 4.53467 2.12329 4.53871 1.94867 4.36908L0.133653 2.60587C0.0482118 2.52287 0 2.40882 0 2.2897C0 2.17058 0.0482118 2.05653 0.133653 1.97353L1.94867 0.210321C2.12329 0.0406877 2.40236 0.044729 2.572 0.219347C2.74163 0.393966 2.73759 0.673036 2.56297 0.842669L1.52719 1.84888L10.1385 1.84875C10.3819 1.84874 10.5793 2.04609 10.5793 2.28954Z"
+            fill="black" />
+        </svg>
+      </div>
+      Back to category
+    </a>
+
+    <div class="product-container">
+  <!-- Product Details -->
+  <div class="product-details">
+
+    <div class="product-header">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">    
+
+
+    <span class="availability-badge {{ 'available' if book.available_copies > 0 else 'unavailable' }}">
+  {{ 'Available' if book.available_copies > 0 else 'Unavailable' }}
+</span>
+
+      <!-- Wishlist (JS déjà existant) -->
+      <button
+  class="wishlist-btn js-favorite-btn {% if book.is_favorite %}active{% endif %}"
+  data-book-id="{{ book.isbn }}"
+  data-text-on="Remove from wishlist"
+  data-text-off="Add to wishlist"
+>
+
+  <!-- svg inchangé -->
+
+        <svg width="20" height="20" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
+          <path
+            d="M7.98803 14.3426C7.90897 14.3426 7.82988 14.3275 7.75604 14.2966C7.51215 14.1945 1.77217 11.7471 0.851794 7.38868C0.496026 5.70249 0.85329 4.05743 1.80722 2.98907C2.57917 2.12369 3.68896 1.66356 5.01731 1.65738C5.02402 1.65738 5.03073 1.65738 5.0367 1.65738C6.55225 1.65738 7.4764 2.45079 7.9873 3.12622C8.50044 2.44804 9.43195 1.65121 10.9572 1.65738C12.2863 1.66356 13.3969 2.12369 14.1696 2.98907C15.122 4.05674 15.4785 5.70179 15.122 7.38935C14.2031 11.7478 8.46235 14.1959 8.21846 14.2974C8.14612 14.3275 8.06709 14.3426 7.98803 14.3426Z"
+            fill="#4F4632"
+          />
+        </svg>
+      </button>
+
+    </div>
+        
+
+        <div class="rating-section">
+          <div class="stars">
+            <svg width="76" height="18" viewBox="0 0 76 18" fill="#E8BA96" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 8.71094C12 8.53906 11.8672 8.42969 11.6016 8.38281L7.96875 7.84375L6.35156 4.5625C6.25781 4.375 6.14062 4.28125 6 4.28125C5.85938 4.28125 5.74219 4.375 5.64844 4.5625L4.03125 7.84375L0.398438 8.38281C0.132812 8.42969 0 8.53906 0 8.71094C0 8.82031 0.0625 8.9375 0.1875 9.0625L2.8125 11.6172L2.17969 15.2266C2.17969 15.2891 2.17969 15.3359 2.17969 15.3672C2.17969 15.4609 2.20312 15.543 2.25 15.6133C2.29688 15.6836 2.375 15.7188 2.48438 15.7188C2.5625 15.7188 2.65625 15.6875 2.76562 15.625L6 13.9375L9.23438 15.625C9.34375 15.6875 9.4375 15.7188 9.51562 15.7188C9.625 15.7188 9.70312 15.6836 9.75 15.6133C9.79688 15.543 9.82031 15.4609 9.82031 15.3672C9.82031 15.3047 9.82031 15.2578 9.82031 15.2266L9.1875 11.6172L11.8125 9.0625C11.9375 8.9375 12 8.82031 12 8.71094Z"
+                fill="#E8BA96" />
+              <path
+                d="M28 8.71094C28 8.53906 27.8672 8.42969 27.6016 8.38281L23.9688 7.84375L22.3516 4.5625C22.2578 4.375 22.1406 4.28125 22 4.28125C21.8594 4.28125 21.7422 4.375 21.6484 4.5625L20.0312 7.84375L16.3984 8.38281C16.1328 8.42969 16 8.53906 16 8.71094C16 8.82031 16.0625 8.9375 16.1875 9.0625L18.8125 11.6172L18.1797 15.2266C18.1797 15.2891 18.1797 15.3359 18.1797 15.3672C18.1797 15.4609 18.2031 15.543 18.25 15.6133C18.2969 15.6836 18.375 15.7188 18.4844 15.7188C18.5625 15.7188 18.6562 15.6875 18.7656 15.625L22 13.9375L25.2344 15.625C25.3438 15.6875 25.4375 15.7188 25.5156 15.7188C25.625 15.7188 25.7031 15.6836 25.75 15.6133C25.7969 15.543 25.8203 15.4609 25.8203 15.3672C25.8203 15.3047 25.8203 15.2578 25.8203 15.2266L25.1875 11.6172L27.8125 9.0625C27.9375 8.9375 28 8.82031 28 8.71094Z"
+                fill="#E8BA96" />
+              <path
+                d="M44 8.71094C44 8.53906 43.8672 8.42969 43.6016 8.38281L39.9688 7.84375L38.3516 4.5625C38.2578 4.375 38.1406 4.28125 38 4.28125C37.8594 4.28125 37.7422 4.375 37.6484 4.5625L36.0312 7.84375L32.3984 8.38281C32.1328 8.42969 32 8.53906 32 8.71094C32 8.82031 32.0625 8.9375 32.1875 9.0625L34.8125 11.6172L34.1797 15.2266C34.1797 15.2891 34.1797 15.3359 34.1797 15.3672C34.1797 15.4609 34.2031 15.543 34.25 15.6133C34.2969 15.6836 34.375 15.7188 34.4844 15.7188C34.5625 15.7188 34.6562 15.6875 34.7656 15.625L38 13.9375L41.2344 15.625C41.3438 15.6875 41.4375 15.7188 41.5156 15.7188C41.625 15.7188 41.7031 15.6836 41.75 15.6133C41.7969 15.543 41.8203 15.4609 41.8203 15.3672C41.8203 15.3047 41.8203 15.2578 41.8203 15.2266L41.1875 11.6172L43.8125 9.0625C43.9375 8.9375 44 8.82031 44 8.71094Z"
+                fill="#E8BA96" />
+              <path
+                d="M60 8.71094C60 8.53906 59.8672 8.42969 59.6016 8.38281L55.9688 7.84375L54.3516 4.5625C54.2578 4.375 54.1406 4.28125 54 4.28125C53.8594 4.28125 53.7422 4.375 53.6484 4.5625L52.0312 7.84375L48.3984 8.38281C48.1328 8.42969 48 8.53906 48 8.71094C48 8.82031 48.0625 8.9375 48.1875 9.0625L50.8125 11.6172L50.1797 15.2266C50.1797 15.2891 50.1797 15.3359 50.1797 15.3672C50.1797 15.4609 50.2031 15.543 50.25 15.6133C50.2969 15.6836 50.375 15.7188 50.4844 15.7188C50.5625 15.7188 50.6562 15.6875 50.7656 15.625L54 13.9375L57.2344 15.625C57.3438 15.6875 57.4375 15.7188 57.5156 15.7188C57.7188 15.7188 57.8203 15.6016 57.8203 15.3672C57.8203 15.3047 57.8203 15.2578 57.8203 15.2266L57.1875 11.6172L59.8125 9.0625C59.9375 8.9375 60 8.82031 60 8.71094ZM56.2031 11.2891L56.7188 14.3125L54 12.8828L51.2812 14.3125L51.7969 11.2891L49.5938 9.15625L52.6406 8.6875L54 5.94531L55.3594 8.6875L58.4062 9.15625L56.2031 11.2891Z"
+                fill="#E8BA96" />
+              <path
+                d="M76 8.71094C76 8.53906 75.8672 8.42969 75.6016 8.38281L71.9688 7.84375L70.3516 4.5625C70.2578 4.375 70.1406 4.28125 70 4.28125C69.8594 4.28125 69.7422 4.375 69.6484 4.5625L68.0312 7.84375L64.3984 8.38281C64.1328 8.42969 64 8.53906 64 8.71094C64 8.82031 64.0625 8.9375 64.1875 9.0625L66.8125 11.6172L66.1797 15.2266C66.1797 15.2891 66.1797 15.3359 66.1797 15.3672C66.1797 15.4609 66.2031 15.543 66.25 15.6133C66.2969 15.6836 66.375 15.7188 66.4844 15.7188C66.5625 15.7188 66.6562 15.6875 66.7656 15.625L70 13.9375L73.2344 15.625C73.3438 15.6875 73.4375 15.7188 73.5156 15.7188C73.7188 15.7188 73.8203 15.6016 73.8203 15.3672C73.8203 15.3047 73.8203 15.2578 73.8203 15.2266L73.1875 11.6172L75.8125 9.0625C75.9375 8.9375 76 8.82031 76 8.71094ZM72.2031 11.2891L72.7188 14.3125L70 12.8828L67.2812 14.3125L67.7969 11.2891L65.5938 9.15625L68.6406 8.6875L70 5.94531L71.3594 8.6875L74.4062 9.15625L72.2031 11.2891Z"
+                fill="#E8BA96" />
+            </svg>
+
+          </div>
+          <a href="#reviews-title" class="write-review">
+            <svg width="15" height="13" viewBox="0 0 15 13" fill="none">
+              <path
+                d="M13.3787 0.621833C13.0105 0.254148 12.5113 0.0476322 11.991 0.0476322C11.4706 0.0476322 10.9715 0.254148 10.6032 0.621833L1.79354 9.4315C1.54126 9.68236 1.34123 9.98076 1.20502 10.3094C1.06881 10.6381 0.999126 10.9905 1 11.3463V12.4583C1 12.602 1.05707 12.7398 1.15865 12.8414C1.26023 12.9429 1.39801 13 1.54167 13H2.65371C3.00945 13.001 3.36187 12.9314 3.69054 12.7953C4.01922 12.6592 4.31763 12.4592 4.5685 12.207L13.3787 3.39679C13.7462 3.02856 13.9526 2.52956 13.9526 2.00931C13.9526 1.48906 13.7462 0.990061 13.3787 0.621833Z"
+                fill="black" />
+            </svg>
+            Write a Review
+          </a>
+        </div>
+
+        <h1 class="product-title">{{ book.title }}</h1>
+
+        <div class="product-description">
+          <p>{{ book.description }}</p>
+        </div>
+
+        <div class="product-meta">
+          <div class="meta-row">
+            <span class="meta-label">Author:</span>
+            <span class="meta-value">{{book.author}}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Category:</span>
+            <span>{{book.category}}</span>
+          </div>
+          <div class="meta-row">
+          </div>
+        </div>
+
+        <button
+  class="request-btn"
+  data-book-id="{{ book.isbn }}"
+  data-status="{{ book.status }}"
+  data-available-copies="{{ book.available_copies }}"
+  {% if book.status == "borrowed" %}disabled{% endif %}
+>
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+    <g clip-path="url(#clip0_3316_7951)">
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M11.8068 4.5H3.19348C2.32825 4.5 1.64242 5.23002 1.6964 6.09357L2.0714 12.0936C2.12081 12.8841 2.77639 13.5 3.56848 13.5H11.4318C12.2239 13.5 12.8795 12.8841 12.9289 12.0936L13.3039 6.09357C13.3578 5.23002 12.672 4.5 11.8068 4.5ZM3.19348 3C1.46302 3 0.0913775 4.46004 0.199321 6.18713L0.574321 12.1871C0.67314 13.7683 1.98429 15 3.56848 15H11.4318C13.016 15 14.3271 13.7683 14.426 12.1871L14.801 6.18713C14.9089 4.46004 13.5372 3 11.8068 3H3.19348Z"
+        fill="white" />
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M3.75 3.75C3.75 1.67894 5.42894 0 7.5 0C9.57105 0 11.25 1.67894 11.25 3.75V5.25C11.25 5.66421 10.9142 6 10.5 6C10.0858 6 9.75 5.66421 9.75 5.25V3.75C9.75 2.50736 8.74267 1.5 7.5 1.5C6.25736 1.5 5.25 2.50736 5.25 3.75V5.25C5.25 5.66421 4.91421 6 4.5 6C4.08579 6 3.75 5.66421 3.75 5.25V3.75Z"
+        fill="white" />
+    </g>
+    <defs>
+      <clipPath id="clip0_3316_7951">
+        <rect width="15" height="15" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+
+  {% if book.status == "borrowed" %}
+    <span>Borrowed</span>
+  {% elif book.status == "reserved" %}
+    <span>Cancel</span>
+  {% elif book.available_copies == 0 %}
+    <span>Reserve</span>
+  {% else %}
+    <span>Borrow</span>
+  {% endif %}
+</button>
+
+      </div>
+
+      <div class="main-spacer">
+        <!-- Image Gallery -->
+        <div class="image-gallery">
+          <div class="main-image">
+            <img src="https://covers.openlibrary.org/b/isbn/{{book.isbn}}.jpg" 
+                            alt="{{ book.title }}"
+                            loading="lazy">
+          </div>
+          <div class="thumbnail-list">
+            <div class="thumbnail">
+              <div class="thumbnail-image">
+              </div>
+            </div>
+            <div style="border: none;" class="thumbnail">
+              <div class="thumbnail-image active">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Description and More Section -->
+  <section class="info-section">
+    <div class="info-block-desc">
+      <h2>DESCRIPTION:</h2>
+      <p>{{book.description}}</p>
+    </div>
+    <div class="info-block">
+      <h2>MORE:</h2>
+      <ul class="info-list">
+        <li>ISBN: {{book.isbn}}</li>
+        <li>Type: {{book.category}}</li>
+        <li>Availability: {{ 'In Stock' if book.available_copies > 0 else 'not available ' }}</li>
+      </ul>
+    </div>
+  </section>
+
+<!-- Other Books Section -->
+<section class="other-books-section">
+  <h2 class="section-title">Other Books</h2>
+
+  <div class="books-grid">
+    {% for book in suggested_books %}
+      <div class="book-item">
+
+        <div class="book-item-image">
+          <img
+            src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}.jpg"
+            alt="{{ book.title }}"
+            loading="lazy"
+          >
+        </div>
+
+        <h3 class="book-item-title">{{ book.title }}</h3>
+
+        <!-- Same old button, Discover only -->
+        <button
+          class="book-item-btn"
+          type="button"
+          onclick="window.location.href='/books/{{ book.isbn }}'"
+        >
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_3316_7951)">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M11.8068 4.5H3.19348C2.32825 4.5 1.64242 5.23002 1.6964 6.09357L2.0714 12.0936C2.12081 12.8841 2.77639 13.5 3.56848 13.5H11.4318C12.2239 13.5 12.8795 12.8841 12.9289 12.0936L13.3039 6.09357C13.3578 5.23002 12.672 4.5 11.8068 4.5ZM3.19348 3C1.46302 3 0.0913775 4.46004 0.199321 6.18713L0.574321 12.1871C0.67314 13.7683 1.98429 15 3.56848 15H11.4318C13.016 15 14.3271 13.7683 14.426 12.1871L14.801 6.18713C14.9089 4.46004 13.5372 3 11.8068 3H3.19348Z"
+                fill="#e8ba96" />
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M3.75 3.75C3.75 1.67894 5.42894 0 7.5 0C9.57105 0 11.25 1.67894 11.25 3.75V5.25C11.25 5.66421 10.9142 6 10.5 6C10.0858 6 9.75 5.66421 9.75 5.25V3.75C9.75 2.50736 8.74267 1.5 7.5 1.5C6.25736 1.5 5.25 2.50736 5.25 3.75V5.25C5.25 5.66421 4.91421 6 4.5 6C4.08579 6 3.75 5.66421 3.75 5.25V3.75Z"
+                fill="#e8ba96" />
+            </g>
+            <defs>
+              <clipPath id="clip0_3316_7951">
+                <rect width="15" height="15" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+          Discover
+        </button>
+
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+
+
+
+  <section class="reviews-section" data-isbn="{{ book.isbn }}">
+
+  <h2 class="reviews-title">Students Reviews</h2>
+
+  <!-- CTA discret (UX progressive) -->
+  <div class="review-cta" id="open-review">
+    ⭐ Write a review
+  </div>
+
+  <!-- Review form (hidden by default) -->
+  <form id="review-form" class="review-box" hidden>
+    <div class="rating-stars" aria-label="Rating">
+      <span data-value="1">★</span>
+      <span data-value="2">★</span>
+      <span data-value="3">★</span>
+      <span data-value="4">★</span>
+      <span data-value="5">★</span>
+    </div>
+
+    <textarea
+      name="comment"
+      placeholder="What did you think about this book?"
+      required
+    ></textarea>
+
+    <div class="review-actions">
+      <button type="submit">Publish</button>
+      <span id="review-error" aria-live="polite"></span>
+    </div>
+  </form>
+
+  <!-- Loading state -->
+  <div id="reviews-loading">Loading reviews…</div>
+
+  <!-- Reviews injected safely by JS -->
+  <div id="reviews-content" hidden></div>
+
+</section>
+
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-about">
+        <h3>books.</h3>
+        <p>{{book.description}}</p>
+      </div>
+      <div class="footer-links">
+        <h4>Help:</h4>
+        <ul>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Support:</h4>
+        <ul>
+          <li><a href="#">About us</a></li>
+          <li><a href="#">Collection Page</a></li>
+          <li><a href="#">FAQS</a></li>
+          <li><a href="#">Contact us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 Studio WorkDo. Powered by WorkDo.io
+    </div>
+  </footer>
+</body>
+<script src="/static/js/favorites.js"></script>
+<script src="/static/js/request_book.js"></script>
+<script src="/static/js/reviews.js"></script>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books - Library</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Outfit:wght@100;200;300;400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/home_user.css">
+</head>
+<style>
+html {
+  scroll-behavior: smooth;
+}
+.notification-container {
+    position: relative;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e63946;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+
+.book-icon-btn svg path {
+  fill: transparent;
+  stroke: #b5b5b5;
+  stroke-width: 1.5;
+
+  transition:
+    fill 0.25s ease,
+    stroke 0.25s ease,
+    transform 0.2s ease;
+}
+
+/* Hover */
+.book-icon-btn:hover svg path {
+  stroke: #ff4d4d;
+  transform: scale(1.1);
+}
+
+/* Actif (favori) */
+.book-icon-btn.active svg path {
+  fill: #ff4d4d;
+  stroke: #ff4d4d;
+}
+
+/* Click feedback */
+.book-icon-btn:active svg path {
+  transform: scale(0.95);
+}
+
+/* PANEL */
+.notif-panel {
+  position: fixed;
+  top: 72px;
+  right: 16px;
+  width: 360px;
+  max-height: calc(100vh - 100px);
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  z-index: 3000;
+  overflow: hidden;
+}
+
+/* HIDDEN */
+.notif-panel.hidden {
+  display: none;
+}
+
+/* HEADER */
+.notif-header {
+  padding: 14px 18px;
+  background: #E8BA96;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* LIST */
+.notif-list {
+  padding: 12px;
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+/* ITEM */
+.notification-item {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+/* TITLE ROW */
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* TEXT */
+.notification-text {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.4;
+}
+
+
+</style>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-shadow">
+            <div class="header-container">
+                <!-- Logo -->
+                <div class="logo-container">
+                    <a href="/home" class="logo-link">
+                        <div class="logo">
+                            <img src="/static/assets/books..webp" alt="Books" class="logo-img">
+                        </div>
+                    </a>
+                </div>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <!-- Navigation -->
+                <div class="nav-container">
+                    <nav class="nav-list">
+                        <!-- Latest Books -->
+                        <div class="nav-item">
+                            <div class="nav-link-wrapper">
+                                <svg class="book-icon" fill="none" preserveAspectRatio="none" viewBox="0 0 13 16">
+                                    <path clip-rule="evenodd" d="M0 2.90909C0 1.30244 1.2934 0 2.88889 0H8.91449C9.68067 0 10.4155 0.306493 10.9572 0.852053L12.1539 2.05704C12.6956 2.6026 13 3.34254 13 4.11408V13.0909C13 14.6976 11.7066 16 10.1111 16H2.88889C1.2934 16 0 14.6976 0 13.0909V2.90909ZM11.5556 5.09091V13.0909C11.5556 13.8942 10.9089 14.5455 10.1111 14.5455H2.88889C2.09114 14.5455 1.44444 13.8942 1.44444 13.0909V2.90909C1.44444 2.10577 2.09114 1.45455 2.88889 1.45455H7.94444V2.90909C7.94444 4.11408 8.91449 5.09091 10.1111 5.09091H11.5556ZM11.4754 3.63636C11.4045 3.43098 11.2881 3.24224 11.1325 3.08556L9.93587 1.88057C9.78028 1.72389 9.59285 1.60665 9.38889 1.53523V2.90909C9.38889 3.31075 9.71224 3.63636 10.1111 3.63636H11.4754Z" fill="#E8BA96" fill-rule="evenodd"/>
+                                    <path d="M1.25003 0.101601L4.57902 1.83789C5.14033 2.13064 5.14033 2.86936 4.57902 3.1621L1.25003 4.8984C0.69303 5.1889 0 4.8218 0 4.2363V0.76372C0 0.17818 0.69303 -0.188899 1.25003 0.101601Z" fill="#E8BA96"/>
+                                </svg>
+                                <a href="#books" class="nav-text latest-books" style="text-decoration: none;">Latest books</a>
+                            </div>
+                        </div>
+
+                        <!-- Pages -->
+                        <div class="nav-item">
+                        </div>
+                    </nav>
+
+                    <!-- Right Icons -->
+                    <div class="header-icons">
+
+    <!-- Notifications -->
+    <div class="icon-item notification-container">
+        <svg class="icon-svg" fill="none" viewBox="0 0 24 24">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.1-1.6-5.6-4.5-6.3V4a1.5 1.5 0 10-3 0v.7C7.6 5.4 6 7.9 6 11v5l-2 2v1h16v-1l-2-2z"
+                  fill="#1D1D1B"/>
+        </svg>
+
+        <!-- Badge unread -->
+        <span class="notif-badge" id="notif-count">0</span>
+    </div>
+
+    <!-- History (Borrowings + Reservations) -->
+    <div class="icon-item">
+        <a href="/borrowings/history" title="Historique">
+            <svg class="icon-svg" fill="none" viewBox="0 0 24 24">
+                <path d="M13 3a9 9 0 109 9h-2a7 7 0 11-7-7v4l5-5-5-5v4z"
+                      fill="#1D1D1B"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Favorites -->
+    <div class="icon-item">
+        <a href="/favorites" title="Favoris">
+            <svg class="icon-svg" fill="none" viewBox="0 0 24 24">
+                <path d="M12 21s-6.7-4.4-9.3-7C-1 9.7 2.4 3 8 5.2 9.6 5.9 12 8.4 12 8.4s2.4-2.5 4-3.2C21.6 3 25 9.7 21.3 14c-2.6 2.6-9.3 7-9.3 7z"
+                      fill="#1D1D1B"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Account (inchangé) -->
+    <div class="icon-item">
+        <svg class="icon-svg" fill="none" viewBox="0 0 19 19">
+            <path d="M9.5 8.6c1.9 0 3.5-1.5 3.5-3.4S11.4 1.7 9.5 1.7 6 3.3 6 5.2s1.6 3.4 3.5 3.4z"
+                  fill="#1D1D1B"/>
+            <path d="M9.5 10.4c-3.4 0-6.2 2.7-6.2 6v1.7h12.4v-1.7c0-3.3-2.8-6-6.2-6z"
+                  fill="#1D1D1B"/>
+        </svg>
+    </div>
+
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Notification Panel -->
+<!-- NOTIFICATION PANEL -->
+<div id="notification-panel" class="notif-panel hidden">
+
+  <div class="notif-container">
+
+    <!-- Header -->
+    <div class="notif-header">
+      Notifications
+    </div>
+
+    <!-- Notification list -->
+    <div class="notif-list">
+
+      <!-- Notification item -->
+      <div class="notification-item">
+        <div class="notification-content">
+          <div class="icon-wrapper">
+          </div>
+
+          <div class="notification-details">
+            <div class="notification-header">
+              <span class="notification-title">Library</span>
+              <span class="notification-time">10 am</span>
+            </div>
+
+            <p class="notification-text">
+              Your request to borrow <strong>[Book Title]</strong> has been approved.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Duplicate this block later dynamically -->
+
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-container">
+                <!-- Left Content -->
+                <div class="hero-left">
+                    <div class="hero-content">
+                        <h1 class="hero-title">
+                            <span class="title-black">Thousands of Books,</span><br>
+                            <span class="title-orange">One Library</span>
+                        </h1>
+                        <p class="hero-subtitle">Where Technology Connects You to Knowledge.</p>
+                        
+                        <!-- Search Bar -->
+                        <form class="search-container" action="/books" method="get">
+    <input
+        type="text"
+        name="search"
+        placeholder="Search Product..."
+        class="search-input"
+        required
+    >
+
+    <button class="search-button" aria-label="Submit search" type="submit">
+        <svg class="search-icon" fill="none" preserveAspectRatio="none" viewBox="0 0 15 15">
+            <path clip-rule="evenodd"
+                  d="M10.2122 11.3214C9.14028 12.1539 7.79329 12.6497 6.33041 12.6497C2.83422 12.6497 0 9.81797 0 6.32485C0 2.83173 2.83422 0 6.33041 0C9.82659 0 12.6608 2.83173 12.6608 6.32485C12.6608 7.78645 12.1646 9.13226 11.3313 10.2033L13.78 12.6496C14.089 12.9583 14.089 13.4589 13.78 13.7677C13.4709 14.0764 12.9699 14.0764 12.6609 13.7677L10.2122 11.3214ZM11.0782 6.32485C11.0782 8.94469 8.95255 11.0685 6.33041 11.0685C3.70827 11.0685 1.5826 8.94469 1.5826 6.32485C1.5826 3.70501 3.70827 1.58121 6.33041 1.58121C8.95255 1.58121 11.0782 3.70501 11.0782 6.32485Z"
+                  fill="#4F4632"
+                  fill-rule="evenodd"/>
+        </svg>
+    </button>
+</form>
+
+
+                        <!-- Show All Books Button -->
+                        <a style="text-decoration: none;" href="/books" class="show-all-btn">Show All Books →</a>
+                    </div>
+                </div>
+
+                <!-- Right Image -->
+                <div class="hero-right">
+                    <img src="/static/assets/Hero-main.webp" alt="Person reading" class="hero-image">
+                </div>
+            </div>
+        </section>
+
+        <!-- Books Section -->
+        <section class="books-section" id="books">
+            <div class="info-banner">
+                <h3 class="banner-title">Borrow, Reserve, Read</h3>
+                <p class="banner-text">Manage your books easily — borrow what you love, reserve what you need, and enjoy reading anytime through your school's digital library.</p>
+                <div class="banner-time">
+                    <span class="time-label">Open daily from:</span>
+                    <span class="time-value">9:00 to 18:00</span>
+                </div>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">    
+            </div>
+
+            <!-- Dynamically generate sections for each category -->
+            {% for category, books in latest_books.items() %}
+            <div class="category-section" data-category="{{ category }}">
+                <div class="books-header">
+                    <h2 class="books-title">
+                        <span class="books-title-black">Discover our latest books about </span>
+                        <span class="books-title-orange">{{ category }}</span>
+                    </h2>
+                </div>
+
+                <!-- Book Cards -->
+                <div class="book-carousel">
+                    <div class="book-track">
+                        {% for book in books %}
+                        <div class="book-card">
+                            <div class="book-image-container">
+                                <img src="https://covers.openlibrary.org/b/isbn/{{book.isbn}}.jpg" 
+                                     alt="{{ book.title }}" 
+                                     class="book-cover"
+                                      loading="lazy"
+                                     >
+                                <div class="book-icons">
+                                        <button
+                                            class="book-icon-btn js-favorite-btn {% if book.is_favorite %}active{% endif %}"
+                                            data-book-id="{{ book.isbn }}"
+                                            aria-label="Add to favorites"
+                                            aria-pressed="{{ 'true' if book.is_favorite else 'false' }}"
+                                        >
+                                            <svg
+                                                    class="book-heart-icon"
+                                                    viewBox="0 0 24 24"
+                                                    width="16"
+                                                    height="16"
+                                                    aria-hidden="true"
+                                                    >
+                                                    <path
+                                                        d="M12 21s-7.5-4.87-10-9.27C.36 8.58 2.28 4.5 6.2 4.5
+                                                        c2 0 3.6 1.16 4.8 2.7
+                                                        1.2-1.54 2.8-2.7 4.8-2.7
+                                                        3.92 0 5.84 4.08 4.2 7.23
+                                                        C19.5 16.13 12 21 12 21z"
+                                                        fill="currentColor"
+                                                        stroke="#E8BA96"
+                                                        stroke-width="1.5"
+                                                    />
+                                            </svg>
+
+                                        </button>
+                                        </div>
+                                </div>
+                            <div class="book-details">
+                                <h3 class="book-title">{{ book.title }}</h3>
+                                <div class="book-info-row">
+                                    <span class="book-label">Author:</span>
+                                    <span class="book-value">{{ book.author }}</span>
+                                </div>
+                                <div class="book-info-row">
+                                    <span class="book-label">Category:</span>
+                                    <span class="book-value">{{ book.category }}</span>
+                                </div>
+                                <div class="book-info-row">
+                                    <span class="book-label">ISBN:</span>
+                                    <span class="book-value">{{ book.isbn }}</span>
+                                </div>
+                                <button class="request-btn" data-isbn="{{ book.isbn }}">
+                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_3316_7951)">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.8068 4.5H3.19348C2.32825 4.5 1.64242 5.23002 1.6964 6.09357L2.0714 12.0936C2.12081 12.8841 2.77639 13.5 3.56848 13.5H11.4318C12.2239 13.5 12.8795 12.8841 12.9289 12.0936L13.3039 6.09357C13.3578 5.23002 12.672 4.5 11.8068 4.5ZM3.19348 3C1.46302 3 0.0913775 4.46004 0.199321 6.18713L0.574321 12.1871C0.67314 13.7683 1.98429 15 3.56848 15H11.4318C13.016 15 14.3271 13.7683 14.426 12.1871L14.801 6.18713C14.9089 4.46004 13.5372 3 11.8068 3H3.19348Z" fill="white"/>
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.75 3.75C3.75 1.67894 5.42894 0 7.5 0C9.57105 0 11.25 1.67894 11.25 3.75V5.25C11.25 5.66421 10.9142 6 10.5 6C10.0858 6 9.75 5.66421 9.75 5.25V3.75C9.75 2.50736 8.74267 1.5 7.5 1.5C6.25736 1.5 5.25 2.50736 5.25 3.75V5.25C5.25 5.66421 4.91421 6 4.5 6C4.08579 6 3.75 5.66421 3.75 5.25V3.75Z" fill="white"/>
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_3316_7951">
+                                                <rect width="15" height="15" fill="white"/>
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                    Request this Book
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="discover-more">
+    <a
+        href="/books?category={{ category }}"
+        class="discover-btn"
+        aria-label="Discover more {{ category }}"
+        style="text-decoration: none;
+               display: inline-flex;
+               align-items: center;
+               font-weight: 500;
+               color: #4F4632;"
+    >
+        →
+    </a>
+</div>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <!-- Logo -->
+                <div class="footer-logo-section">
+                    <img src="/static/assets/books..webp" alt="Books" class="footer-logo">
+                </div>
+
+                <!-- Help Section -->
+                <div class="footer-section">
+                    <h4 class="footer-heading">Help:</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://books-workdo.myshopify.com/pages/contact">Contact</a></li>
+                        <li><a href="https://books-workdo.myshopify.com/pages/privacy-policy">Privacy Policy</a></li>
+                        <li><a href="https://books-workdo.myshopify.com/pages/terms-conditions">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support Section -->
+                <div class="footer-section">
+                    <h4 class="footer-heading">Support:</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://books-workdo.myshopify.com/pages/about-us">About us</a></li>
+                        <li><a href="https://books-workdo.myshopify.com/collections">Collections Page</a></li>
+                        <li><a href="https://books-workdo.myshopify.com/pages/faqs">Faq's</a></li>
+                        <li><a href="https://books-workdo.myshopify.com/pages/contact">Contact us</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="footer-bottom">
+                <p class="copyright">© 2025, <a href="https://books-workdo.myshopify.com/">Books WorkDo</a>, <a href="https://workdo.io/">Powered by WorkDo.io</a></p>
+            </div>
+        </div>
+    </footer>
+<script src="/static/js/favorites.js"></script>
+
+
+</body>
+</html>
+<script>
+  const notifToggle = document.querySelector(".notification-container");
+  const notifPanel = document.getElementById("notification-panel");
+
+  if (notifToggle && notifPanel) {
+    notifToggle.addEventListener("click", () => {
+      notifPanel.classList.toggle("hidden");
+    });
+  }
+</script>
+
+<script src="/static/js/notification.js"></script>

@@ -1,0 +1,309 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+.notification-wrapper {
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background-color: #e8ba96;
+  padding: 20px 22px;
+  flex-shrink: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 19.5px;
+  color: white;
+  line-height: normal;
+}
+
+/* Notification List */
+.notification-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 10px 0;
+}
+
+.notification-item {
+  width: 100%;
+  background-color: transparent;
+}
+
+.notification-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 25px;
+}
+
+/* Icon */
+.icon-wrapper {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: #e8ba96;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  width: 46px;
+  height: 46px;
+}
+
+/* Notification Details */
+.notification-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.notification-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 16.6px;
+  color: #595f6c;
+  white-space: pre;
+}
+
+.notification-time {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14.5px;
+  color: #88919e;
+  white-space: nowrap;
+  width: 43px;
+  text-align: right;
+}
+
+.notification-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14.6px;
+  color: #6f747f;
+  line-height: normal;
+  margin: 0;
+}
+
+/* Download Row */
+.download-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-right: 30px;
+}
+
+.download-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14.6px;
+  color: #6f747f;
+  white-space: pre;
+}
+
+.download-button {
+  background-color: #e8ba96;
+  border: none;
+  border-radius: 10px;
+  width: 40px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.download-button:hover {
+  opacity: 0.9;
+}
+
+.download-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Scrollbar Styling */
+.notification-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #e8ba96;
+  border-radius: 4px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: #d4a783;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  .notification-wrapper {
+    max-height: 100vh;
+  }
+
+  .header {
+    padding: 15px 18px;
+  }
+
+  .header-title {
+    font-size: 18px;
+  }
+
+  .notification-content {
+    padding: 10px 20px;
+    gap: 8px;
+  }
+
+  .icon-wrapper {
+    width: 45px;
+    height: 45px;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .notification-title {
+    font-size: 15px;
+  }
+
+  .notification-time {
+    font-size: 13px;
+    width: 40px;
+  }
+
+  .notification-text {
+    font-size: 13.5px;
+  }
+
+  .download-text {
+    font-size: 13.5px;
+  }
+
+  .download-button {
+    width: 28px;
+    height: 28px;
+  }
+
+  .download-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .download-row {
+    padding-right: 25px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .notification-content {
+    padding: 8px 15px;
+  }
+
+  .icon-wrapper {
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .notification-title {
+    font-size: 14px;
+  }
+
+  .notification-time {
+    font-size: 12px;
+  }
+
+  .notification-text {
+    font-size: 12.5px;
+  }
+
+  .download-text {
+    font-size: 12.5px;
+  }
+
+  .download-button {
+    width: 26px;
+    height: 26px;
+  }
+
+  .download-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Fixed height with scroll */
+@media screen and (min-height: 600px) {
+  .notification-wrapper {
+    max-height: 90vh;
+  }
+}
+
+@media screen and (min-height: 800px) {
+  .notification-wrapper {
+    max-height: 85vh;
+  }
+}

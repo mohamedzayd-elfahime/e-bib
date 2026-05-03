@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Books - Books Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/books_user.css">
+</head>
+<style
+>
+/* =========================
+   FILTER INPUTS (SEARCH / AUTHOR)
+   ========================= */
+.breadcrumb-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.filter-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    color: #1d1d1b;
+
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    background-color: #ffffff;
+
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-input::placeholder {
+    color: #9a9a9a;
+    font-size: 13px;
+}
+
+.filter-input:focus {
+    border-color: #e8ba96;
+    box-shadow: 0 0 0 2px rgba(232, 186, 150, 0.25);
+}
+
+/* spacing inside filter blocks */
+.filter-section .filter-options {
+    margin-top: 10px;
+}
+
+/* reset button alignment consistency */
+.filter-reset {
+    background: none;
+    border: none;
+    font-size: 13px;
+    color: #8a8a8a;
+    cursor: pointer;
+    padding: 0;
+}
+
+.filter-reset:hover {
+    color: #1d1d1b;
+    text-decoration: underline;
+}
+/* =========================
+   FILTER CHECKBOX & RADIO
+   ========================= */
+
+.filter-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* hide native input */
+.filter-checkbox input[type="checkbox"],
+.filter-checkbox input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #cfcfcf;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+
+    transition: all 0.2s ease;
+}
+
+/* radio shape */
+.filter-checkbox input[type="radio"] {
+    border-radius: 50%;
+}
+
+/* checked state */
+.filter-checkbox input:checked {
+    border-color: #e8ba96;
+    background-color: #e8ba96;
+}
+
+/* radio inner dot */
+.filter-checkbox input[type="radio"]:checked::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* checkbox checkmark */
+.filter-checkbox input[type="checkbox"]:checked::after {
+    content: "";
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    transform: rotate(45deg);
+}
+
+/* hover effect */
+.filter-checkbox input:hover {
+    border-color: #e8ba96;
+}
+
+/* label */
+.filter-label {
+    font-size: 14px;
+    color: #1d1d1b;
+}
+
+/* count */
+.filter-count {
+    font-size: 13px;
+    color: #8a8a8a;
+}
+/* ===== Favorite button ===== */
+.action-btn.js-favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+/* SVG default */
+.action-btn.js-favorite-btn svg path {
+  fill: #4f4632;
+  transition: fill 0.2s ease;
+}
+
+/* Hover effect */
+.action-btn.js-favorite-btn:hover {
+  background-color: #f3efe9;
+  transform: scale(1.05);
+}
+
+/* Hover heart */
+.action-btn.js-favorite-btn:hover svg path {
+  fill: #c0392b;
+}
+
+/* Active (favorited) */
+.action-btn.js-favorite-btn.active {
+  background-color: #c0392b;
+}
+
+/* Active heart */
+.action-btn.js-favorite-btn.active svg path {
+  fill: #ffffff;
+}
+
+/* Focus (accessibility) */
+.action-btn.js-favorite-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(192, 57, 43, 0.4);
+}
+
+</style>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Left: Logo -->
+                <div class="header-left">
+                    <a href="/home" class="logo">books.</a>
+                    
+                    <!-- Navigation -->
+                    <nav class="nav">
+                        <a href="/home#books" class="nav-link active">
+                            <svg width="13" height="16" viewBox="0 0 13 16" fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.90909C0 1.30244 1.2934 0 2.88889 0H8.91449C9.68067 0 10.4155 0.306493 10.9572 0.852053L12.1539 2.05704C12.6956 2.6026 13 3.34254 13 4.11408V13.0909C13 14.6976 11.7066 16 10.1111 16H2.88889C1.2934 16 0 14.6976 0 13.0909V2.90909Z" fill="#E8BA96"/>
+                            </svg>
+                            <span>Latest Books</span>
+                        </a>
+
+                    </nav>
+                </div>
+                <!-- Right: Icons -->
+                <div class="header-icons">
+                    <button>
+                        <svg width="19" height="19" viewBox="0 0 19 19" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.9355 14.9738C11.5777 16.0283 9.8715 16.6563 8.01852 16.6563C3.59001 16.6563 0 13.0694 0 8.64481C0 4.22019 3.59001 0.633333 8.01852 0.633333C12.447 0.633333 16.037 4.22019 16.037 8.64481C16.037 10.4962 15.4085 12.2009 14.353 13.5575L17.4547 16.6562C17.8461 17.0472 17.8461 17.6813 17.4547 18.0724C17.0631 18.4634 16.4285 18.4634 16.0371 18.0724L12.9355 14.9738ZM14.0324 8.64481C14.0324 11.9633 11.3399 14.6534 8.01852 14.6534C4.69714 14.6534 2.00463 11.9633 2.00463 8.64481C2.00463 5.32635 4.69714 2.6362 8.01852 2.6362C11.3399 2.6362 14.0324 5.32635 14.0324 8.64481Z" fill="black"/>
+                        </svg>
+                    </button>
+                    <button>
+                        <svg width="19" height="19" viewBox="0 0 19 19" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.5 8.63637C11.4432 8.63637 13.0185 7.08971 13.0185 5.18182C13.0185 3.27392 11.4432 1.72727 9.5 1.72727C7.55678 1.72727 5.98148 3.27392 5.98148 5.18182C5.98148 7.08971 7.55678 8.63637 9.5 8.63637Z" fill="#1D1D1B"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.5 10.3636C6.09936 10.3636 3.3426 13.0703 3.3426 16.4091V18.1363C3.3426 18.6134 2.94877 19 2.46296 19C1.97716 19 1.58333 18.6134 1.58333 18.1363V16.4091C1.58333 12.1163 5.12774 8.63637 9.5 8.63637C13.8722 8.63637 17.4167 12.1163 17.4167 16.4091V18.1363C17.4167 18.6134 17.0228 19 16.5371 19C16.0512 19 15.6574 18.6134 15.6574 18.1363V16.4091C15.6574 13.0703 12.9007 10.3636 9.5 10.3636Z" fill="#1D1D1B"/>
+                        </svg>
+                    </button>
+                    <a href="#" class="cart-link">
+                        <span>My Cart:</span>
+                        <div class="cart-icon">
+                            <svg width="19" height="19" viewBox="0 0 19 19" fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.5698 11.627H6.97178C5.80842 11.6273 4.81015 10.7982 4.59686 9.65459L3.47784 3.59252C3.40702 3.20522 3.06646 2.92595 2.67278 2.93238H0.805055C0.360435 2.93238 0 2.57194 0 2.12732C0 1.6827 0.360435 1.32227 0.805055 1.32227H2.68888C3.85224 1.32194 4.85051 2.15101 5.0638 3.29465L6.18282 9.35672C6.25364 9.74402 6.5942 10.0233 6.98788 10.0169H15.5778C15.9715 10.0233 16.3121 9.74402 16.3829 9.35672L17.3972 3.88234C17.4407 3.64509 17.3755 3.40085 17.2195 3.21684C17.0636 3.03283 16.8334 2.92843 16.5922 2.93238H7.2455C6.80088 2.93238 6.44044 2.57194 6.44044 2.12732C6.44044 1.6827 6.80088 1.32227 7.2455 1.32227H16.5841C17.3023 1.32206 17.9833 1.64149 18.4423 2.19385C18.9013 2.74622 19.0907 3.4742 18.959 4.18021L17.9447 9.65459C17.7314 10.7982 16.7331 11.6273 15.5698 11.627Z" fill="#1D1D1B"/>
+                            </svg>
+                            <span class="cart-badge">2</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <!-- Back to home -->
+                <a href="/home" class="back-link">
+                    <div class="back-circle">
+                        <svg width="11" height="5" viewBox="0 0 11 5" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5793 2.28954C10.5793 2.53299 10.382 2.73035 10.1385 2.73035L1.52715 2.73048L2.56297 3.73673C2.73759 3.90636 2.74163 4.18544 2.572 4.36005C2.40236 4.53467 2.12329 4.53871 1.94867 4.36908L0.133653 2.60587C0.0482118 2.52287 0 2.40882 0 2.2897C0 2.17058 0.0482118 2.05653 0.133653 1.97353L1.94867 0.210321C2.12329 0.0406877 2.40236 0.044729 2.572 0.219347C2.74163 0.393966 2.73759 0.673036 2.56297 0.842669L1.52719 1.84888L10.1385 1.84875C10.3819 1.84874 10.5793 2.04609 10.5793 2.28954Z" fill="black"/>
+                        </svg>
+                    </div>
+                    <span>Back to home</span>
+                </a>
+                
+                <!-- Title -->
+                <div class="hero-title-container">
+                    <h1 class="hero-title">All Books</h1>
+                    <span class="book-count">({{total}})</span>
+                </div>
+                
+                <!-- Description -->
+                <p class="hero-description">
+                    The All Books page provides an overview of all books available within the system. It allows users to view the complete collection in one place and serves as a central point for accessing book-related information.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                <!-- Sidebar Filters -->
+                <aside class="sidebar">
+    <h2 class="sidebar-title">FILTERS</h2>
+
+    <!-- SEARCH -->
+    <div class="filter-section">
+        <div class="filter-header">
+            <h3 class="filter-title">Search</h3>
+        </div>
+        <div class="filter-options">
+            <input
+                type="text"
+                class="filter-input"
+                placeholder="Title or author..."
+                data-filter="search"
+                value="{{ filters.search or '' }}"
+            >
+        </div>
+    </div>
+
+    <!-- CATEGORY -->
+    <div class="filter-section">
+        <div class="filter-header">
+            <h3 class="filter-title">Category</h3>
+            <button type="button"
+                    class="filter-reset"
+                    data-reset="category">
+                Reset
+            </button>
+        </div>
+
+        <div class="filter-options">
+            {% for c in categories %}
+            <label class="filter-option">
+                <div class="filter-checkbox">
+                    <input
+                        type="radio"
+                        name="category"
+                        data-filter="category"
+                        value="{{ c.name }}"
+                        {% if filters.category == c.name %}checked{% endif %}
+                    >
+                    <span class="filter-label">{{ c.name }}</span>
+                </div>
+                <span class="filter-count">({{ c.total_books }})</span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- AUTHOR -->
+    <div class="filter-section">
+        <div class="filter-header">
+            <h3 class="filter-title">Author</h3>
+            <button type="button"
+                    class="filter-reset"
+                    data-reset="author">
+                Reset
+            </button>
+        </div>
+
+        <div class="filter-options">
+            <input
+                type="text"
+                class="filter-input"
+                placeholder="Author name..."
+                data-filter="author"
+                value="{{ filters.author or '' }}"
+            >
+        </div>
+    </div>
+</aside>
+
+
+                <!-- Books Grid -->
+                <div class="books-section">
+                    <!-- Breadcrumb and Sort -->
+                    <div class="breadcrumb-sort">
+                        <div class="breadcrumb">
+                            <span>
+  <a href="/home" class="breadcrumb-link">Home</a>
+</span>
+<span>/</span>
+<span class="active">
+  <a href="/books" class="breadcrumb-link">All Books</a>
+</span>
+
+                        </div>
+                    </div>
+
+                    <!-- Books Grid -->
+                    <div class="books-grid">
+
+        {% for book in books %}
+        <article class="book-card">
+
+            <div class="book-image-container">
+                <a style="text-decoration: none;" href="/books/{{book.isbn}}" class="book-image-link">
+                    <div class="book-image">
+                        <img
+                            src="https://covers.openlibrary.org/b/isbn/{{book.isbn}}.jpg" 
+                            alt="{{ book.title }}"
+                            loading="lazy"
+                            >
+
+                    </div>
+                </a>
+
+                <!-- ADD TO FAVORITES -->
+                <div class="book-actions">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+
+                    <button
+                        class="action-btn js-favorite-btn {% if book.is_favorite %}active{% endif %}"
+                        aria-label="Add to favorites"
+                        data-book-id="{{ book.isbn }}">
+
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M7.98803 14.3425C7.90897 14.3425 7.82988 14.3274 7.75604 14.2965C7.51215 14.1944 1.77217 11.747 0.851794 7.38856C0.496026 5.70237 0.85329 4.05731 1.80722 2.98895C2.57917 2.12357 3.68896 1.66343 5.01731 1.65726C6.55225 1.65726 7.4764 2.45066 7.9873 3.1261C8.50044 2.44792 9.43195 1.65109 10.9572 1.65726C12.2863 1.66343 13.3969 2.12357 14.1696 2.98895C15.122 4.05662 15.4785 5.70167 15.122 7.38923C14.2031 11.7477 8.46235 14.1958 8.21846 14.2973C8.14612 14.3274 8.06709 14.3425 7.98803 14.3425Z"
+                                  fill="#4F4632"/>
+                        </svg>
+
+                    </button>
+                </div>
+            </div>
+
+            <div class="book-content">
+
+                <h3 class="book-title">
+                    <a href="#">{{ book.title }}</a>
+                </h3>
+
+                <div class="book-details">
+                    <div class="book-detail">
+                        <span class="detail-label">Author:</span>
+                        <span class="detail-value">{{ book.author }}</span>
+                    </div>
+
+                    <div class="book-detail">
+                        <span class="detail-label">Category:</span>
+                        <span class="detail-value">{{ book.category }}</span>
+                    </div>
+                </div>
+
+                <!-- REQUEST / RESERVE BOOK -->
+<button
+    class="request-btn"
+    data-book-id="{{ book.isbn }}"
+    data-status="{{ book.status }}"
+    data-available-copies="{{ book.available_copies }}"
+    {% if book.status == "borrowed" %}disabled{% endif %}
+>
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M11.8068 4.5H3.19348C2.32825 4.5 1.64242 5.23002 1.6964 6.09357L2.0714 12.0936C2.12081 12.8841 2.77639 13.5 3.56848 13.5H11.4318C12.2239 13.5 12.8795 12.8841 12.9289 12.0936L13.3039 6.09357C13.3578 5.23002 12.672 4.5 11.8068 4.5Z"
+              fill="#E7A974"/>
+    </svg>
+
+    {% if book.status == "borrowed" %}
+        <span>Borrowed</span>
+
+    {% elif book.status == "reserved" %}
+        <span>Cancel</span>
+
+    {% elif book.available_copies == 0 %}
+        <span>Reserve</span>
+
+    {% else %}
+        <span>Borrow</span>
+    {% endif %}
+</button>
+
+
+
+            </div>
+        </article>
+        {% endfor %}
+
+    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        {% set total_pages = (total // size) + (1 if total % size else 0) %}
+
+                        {% if page > 1 %}
+                        <button class="page-btn" data-page="{{ page - 1 }}">‹</button>
+                        {% endif %}
+
+                        {% for p in range(1, total_pages + 1) %}
+                        <button
+                        class="page-btn {% if p == page %}active{% endif %}"
+                        data-page="{{ p }}">
+                        {{ p }}
+                        </button>
+                        {% endfor %}
+
+                        {% if page < total_pages %}
+                        <button class="page-btn" data-page="{{ page + 1 }}">›</button>
+                        {% endif %}
+                        </div>
+
+                </div>
+            </div>
+        </div>
+        <button id="test-return">Test Return</button>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">books.</div>
+                    <div class="footer-links">
+                        <a href="#">Contact</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms & Conditions</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Help:</h3>
+                    <div class="footer-links">
+                        <a href="#">About us</a>
+                        <a href="#">Collections Page</a>
+                        <a href="#">Faq's</a>
+                        <a href="#">Contact us</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Support:</h3>
+                    <div class="footer-links">
+                        <a href="#">About us</a>
+                        <a href="#">Collections Page</a>
+                        <a href="#">Faq's</a>
+                        <a href="#">Contact us</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025, Books WorkDo, Powered by WorkDo.io</p>
+            </div>
+        </div>
+    </footer>
+</body>
+<script src="/static/js/request_book.js"></script>
+<script src="/static/js/return.js"></script>
+<script src="/static/js/filter.js"></script>
+<script src="/static/js/favorites.js"></script>
+
+
+</html>
