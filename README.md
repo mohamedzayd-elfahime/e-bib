@@ -10,6 +10,7 @@ L'objectif du projet est de travailler sur une application proche d'un cas reel,
 - Conception d'une application web avec FastAPI, Jinja2, SQLAlchemy et MySQL.
 - Organisation du code en couches inspiree de la Clean Architecture.
 - Separation entre domaine, cas d'utilisation, infrastructure et presentation.
+- Conception UML avant et pendant l'implementation : cas d'utilisation, activites, etats-transitions et classes.
 - Authentification avec JWT, gestion des sessions et protection CSRF.
 - Modelisation de regles metier autour des emprunts, reservations, retours et disponibilites.
 - Utilisation de repositories pour isoler l'acces aux donnees.
@@ -43,9 +44,28 @@ app/
   config.py         Chargement de la configuration
   main.py           Point d'entree de l'application
 tests/              Tests unitaires et tests d'integration
+docs/uml/           Diagrammes UML et documents de conception
 ```
 
 Cette structure permet de faire evoluer le projet plus facilement : la logique metier reste independante de FastAPI, de MySQL ou des details d'interface.
+
+## Conception UML
+
+Le projet est accompagne de diagrammes UML pour documenter l'analyse et la conception.
+Ces diagrammes montrent les parcours utilisateurs, les traitements principaux et la structure globale du domaine.
+
+- [Diagramme de cas d'utilisation](docs/uml/use-case-diagram.svg)
+- [Diagramme de classes](docs/uml/class-diagram.drawio.html)
+- [Diagramme etats-transitions](docs/uml/state-transition-diagram.drawio.html)
+- [Activite - authentification](docs/uml/activity-authentification.svg)
+- [Activite - recherche de livres](docs/uml/activity-search.svg)
+- [Activite - details d'un livre](docs/uml/activity-book-details.svg)
+- [Activite - emprunt](docs/uml/activity-borrow-book.svg)
+- [Activite - reservation](docs/uml/activity-reservation.svg)
+- [Activite - retour de livre](docs/uml/activity-return-book.svg)
+- [Activite - prolongation](docs/uml/activity-renew-loan.svg)
+- [Activite - avis utilisateur](docs/uml/activity-review.svg)
+- [Activite - favoris](docs/uml/activity-toggle-favorite.svg)
 
 ## Stack technique
 
